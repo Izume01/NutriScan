@@ -2,7 +2,7 @@ import React from 'react';
 import { Route, Routes } from 'react-router';
 import { Sidebar } from './Components/Sidebar';
 import { Dashboard } from './Components/Dashboard';
-
+import { Challenges } from './Components/Challenges';
 function App() {
 
   return (
@@ -12,6 +12,9 @@ function App() {
       } />
       <Route path="/dashboard" element={
           <Dashboard />
+      } />
+      <Route path="/challenges" element={
+          <Challenges />
       } />
     </Routes>
   )
