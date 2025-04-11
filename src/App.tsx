@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router';
 import { Sidebar } from './Components/Sidebar';
 import { Dashboard } from './Components/Dashboard';
 import { Challenges } from './Components/Challenges';
+import { Activities } from './Components/Activities';
 function App() {
 
   return (
@@ -15,6 +16,9 @@ function App() {
       } />
       <Route path="/challenges" element={
           <Challenges />
+      } />
+      <Route path="/activities" element={
+          <Activities />
       } />
     </Routes>
   )
