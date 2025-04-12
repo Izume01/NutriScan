@@ -10,6 +10,7 @@ export const Signup = () => {
     const [name, setName] = useState('')
 
     const Register = async () => {
+        console.log(email, password, name)
         await registerUser(email, password, name)
         await loginUser(email, password)
 
