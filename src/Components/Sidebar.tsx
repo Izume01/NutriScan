@@ -45,10 +45,10 @@ export const Sidebar = ({ onNavChange, activeItem }: SidebarProps) => {
                 </div>
                 <div 
                     className={`flex gap-2 items-center cursor-pointer hover:bg-[#27272A] p-2 rounded-md ${activeItem === 'statistics' ? 'bg-green-600' : ''}`}
-                    onClick={() => onNavChange('statistics')}
+                    onClick={() => onNavChange('chatbot')}
                 >
                     <ChartLine size={20} />
-                    <p className='text-sm'>Statistics</p>
+                    <p className='text-sm'>Chat bot </p>
                 </div>
                 <div 
                     className={`flex gap-2 items-center cursor-pointer hover:bg-[#27272A] p-2 rounded-md ${activeItem === 'history' ? 'bg-green-600' : ''}`}

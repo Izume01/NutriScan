@@ -4,6 +4,7 @@ import { Logging } from '../Components/Logging'
 import { Challenges } from '../Components/Challenges'
 import { Activities } from '../Components/Activities'
 import { Dashboard } from '../Components/Dashboard'
+import Chatbot  from '../Components/Chatbot'
 
 
 export const Home = () => {
@@ -20,6 +21,8 @@ export const Home = () => {
         return <Activities />
       case 'logging':
         return <Logging />
+      case 'chatbot':
+        return <Chatbot />
       default:
         return <Dashboard />
     }
