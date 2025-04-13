@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { getUser } from './appwrite/authService'; // Missing import here!
 
 import { Route, Routes } from 'react-router';
 import { Sidebar } from './Components/Sidebar';
@@ -11,6 +10,7 @@ import { Login } from './Components/Login';
 import { Signup } from './Components/Signup';
 import PrivateRoute from './Components/PrivateRoute';
 import { useAuthStore } from './Store/authStore';
+import { getUser } from './appwrite/authService';
 
 function App() {
 

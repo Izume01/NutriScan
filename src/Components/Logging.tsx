@@ -1,8 +1,50 @@
 import React, { useState } from "react"
+import { getUser } from "../appwrite/authService"
+import { createEmissionLog } from "../appwrite/dbService"
 
 type ActivityType = "Travel" | "Food" | "Energy" | "Shopping"
 
 export const Logging = () => {
+
+
+  const submitEmission  = async () => {
+    const user = await getUser();
+    const emissionValue = parseFloat(calculateEmissions());
+    
+    // Get the appropriate category field based on activeTab
+    let category = "";
+    switch (activeTab) {
+      case "Travel":
+        category = formData.travelMode;
+        break;
+      case "Food":
+        category = formData.mealType;
+        break;
+      case "Energy":
+        category = formData.energyType;
+        break;
+      case "Shopping":
+        category = formData.category;
+        break;
+    }
+    
+    const data = {
+      userId: user.$id,
+      type: activeTab,
+      category: category,
+      value: emissionValue,
+      unit: "kg",
+      emission: emissionValue,
+      date: formData.date,
+      description : formData.notes,
+      
+    }
+
+    const doc = await createEmissionLog(data)
+    console.log("Document created:", doc)
+  }
+
+
   const [activeTab, setActiveTab] = useState<ActivityType>("Shopping")
   const [formData, setFormData] = useState({
     date: "2025-04-12",
@@ -412,6 +454,7 @@ export const Logging = () => {
                   Cancel
                 </button>
                 <button
+                  onClick={submitEmission}
                   type="submit"
                   className="px-4 py-2 bg-green-500 text-black font-semibold rounded-md hover:bg-green-400"
                 >
