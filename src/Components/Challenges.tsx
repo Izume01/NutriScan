@@ -3,7 +3,7 @@ import { ChevronLeft } from 'lucide-react'
 
 export const Challenges = () => {
     return (
-        <div className='flex flex-col w-full h-screen bg-[#18181B] text-white p-6'>
+        <div className='flex flex-col w-full h-screen bg-[#121212] text-white p-6'>
             <div className='flex flex-row items-center justify-between'>
                 <div className='flex flex-row gap-3 items-center'>
                     <div className='p-2 rounded-full bg-[#27272A] hover:bg-[#3F3F46] flex items-center justify-center cursor-pointer transition-colors'>

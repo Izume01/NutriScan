@@ -380,13 +380,13 @@ export const Logging = () => {
   }
 
   return (
-    <div className="w-full h-screen flex flex-col bg-[#18181B] text-white">
+    <div className="w-full h-screen flex flex-col bg-[#121212] text-white">
       <div className="p-6 flex-1 overflow-auto">
         <h1 className="text-3xl font-bold mb-6">Carbon Footprint Tracker</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-full">
           {/* Left Section - Form */}
-          <div className="lg:col-span-3 bg-[#18181B] p-6 rounded-lg border border-[#3F3F46]">
+          <div className="lg:col-span-3 bg-[#121212] p-6 rounded-lg border border-[#3F3F46]">
             <h2 className="text-2xl font-bold mb-2">Record Your Activity</h2>
             <p className="text-sm text-gray-400 mb-4">
               Log your daily activities to track and reduce your carbon footprint

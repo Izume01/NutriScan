@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 
 import { Route, Routes } from 'react-router';
-import { Sidebar } from './Components/Sidebar';
 import { Dashboard } from './Components/Dashboard';
 import { Challenges } from './Components/Challenges';
 import { Activities } from './Components/Activities';
@@ -11,6 +10,7 @@ import { Signup } from './Components/Signup';
 import PrivateRoute from './Components/PrivateRoute';
 import { useAuthStore } from './Store/authStore';
 import { getUser } from './appwrite/authService';
+import { Home } from './Pages/Home';
 
 function App() {
 
@@ -31,7 +31,7 @@ function App() {
     <Routes>
       <Route path="/" element={
         <PrivateRoute>
-          <Sidebar />
+          <Home />
         </PrivateRoute>
       } />
       <Route path="/dashboard" element={
