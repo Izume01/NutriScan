@@ -89,7 +89,7 @@ export const Onboarding = () => {
         CalculateBaseline()
 
         setTimeout(() => {
-            navigate('/dashboard')
+            navigate('/home')
         }, 3000)
     }
 
