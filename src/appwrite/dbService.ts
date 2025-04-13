@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { databases } from "./appwriteConfig";
 import { ID } from "appwrite";
 import { Query } from 'appwrite';
@@ -79,3 +80,21 @@ export const getUserBaseline = async (userId: string) => {
     throw error;
   }
 };
+
+
+export const offsetTotalEmission = async (userId : string) => {
+  try {
+    const result = await databases.listDocuments(DB_ID, LOGS_ID, [
+      Query.equal("userId", userId),
+      Query.orderDesc("$createdAt"),
+    ]);
+    if (!result.documents || result.documents.length === 0) {
+      return 0;
+    }
+    const totalEmission = result.documents.reduce((acc: number, doc: any) => acc + doc.emission, 0);
+    return totalEmission;
+  } catch (error) {
+    console.error("Error fetching total emissions:", error);
+    throw error;
+  }
+}

@@ -5,6 +5,7 @@ import { Challenges } from '../Components/Challenges'
 import { Activities } from '../Components/Activities'
 import { Dashboard } from '../Components/Dashboard'
 
+
 export const Home = () => {
   const [activeComponent, setActiveComponent] = useState('dashboard')
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import {setUserBaseline} from '../appwrite/dbService'
-import {getUser} from '../appwrite/authService'
-
+import { getUser } from '../appwrite/authService'
+import { useEffect } from 'react'
 const emissionFactors = {
     transport: {
         car: 0.21,        
@@ -37,14 +37,24 @@ export const Onboarding = () => {
         energyUsage: '',
     })
 
-    // baseline data per month
+    const [userId, setUserId] = useState('')
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            const user = await getUser()
+            setUserId(user.$id)
+        }
+
+        fetchUser()
+    })
 
     const CalculateBaseline = () => {
         const transportEmission = emissionFactors.transport[answers.transportMode] * answers.dailyDistance * 30
         const dietEmission = emissionFactors.diet[answers.dietType] * 30
         const energyEmission = emissionFactors.energy[answers.energyUsage] * 30
         const totalEmission = transportEmission + dietEmission + energyEmission
-        const userId = getUser().$id
+
+        console.log('User ID:', userId)
 
         const baselineData = {
             transportEmission,

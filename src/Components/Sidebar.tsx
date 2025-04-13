@@ -52,7 +52,7 @@ export const Sidebar = ({ onNavChange, activeItem }: SidebarProps) => {
                 </div>
                 <div 
                     className={`flex gap-2 items-center cursor-pointer hover:bg-[#27272A] p-2 rounded-md ${activeItem === 'history' ? 'bg-green-600' : ''}`}
-                    onClick={() => onNavChange('history')}
+                    onClick={() => onNavChange('activities')}
                 >
                     <Calendar size={20} />
                     <p className='text-sm'>History</p>
@@ -71,21 +71,21 @@ export const Sidebar = ({ onNavChange, activeItem }: SidebarProps) => {
 
                 <div 
                     className={`flex gap-2 items-center cursor-pointer hover:bg-[#27272A] p-2 rounded-md ${activeItem === 'transport' ? 'bg-green-600' : ''}`}
-                    onClick={() => onNavChange('activities')}
+                    onClick={() => onNavChange('logging')}
                 >
                     <Car size={20} />
                     <p className='text-sm'>Transport</p>
                 </div>
                 <div 
                     className={`flex gap-2 items-center cursor-pointer hover:bg-[#27272A] p-2 rounded-md ${activeItem === 'food' ? 'bg-green-600' : ''}`}
-                    onClick={() => onNavChange('activities')}
+                    onClick={() => onNavChange('logging')}
                 >
                     <Apple size={20} />
                     <p className='text-sm'>Food</p>
                 </div>
                 <div 
                     className={`flex gap-2 items-center cursor-pointer hover:bg-[#27272A] p-2 rounded-md ${activeItem === 'energy' ? 'bg-green-600' : ''}`}
-                    onClick={() => onNavChange('activities')}
+                    onClick={() => onNavChange('logging')}
                 >
                     <Lightbulb size={20} />
                     <p className='text-sm'>Energy</p>
@@ -93,7 +93,7 @@ export const Sidebar = ({ onNavChange, activeItem }: SidebarProps) => {
 
                 <div 
                     className={`flex gap-2 items-center cursor-pointer hover:bg-[#27272A] p-2 rounded-md ${activeItem === 'shopping' ? 'bg-green-600' : ''}`}
-                    onClick={() => onNavChange('activities')}
+                    onClick={() => onNavChange('logging')}
                 >
                     <BaggageClaim size={20} />
                     <p className='text-sm'>Shopping</p>
