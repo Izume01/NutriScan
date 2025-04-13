@@ -11,6 +11,7 @@ import PrivateRoute from './Components/PrivateRoute';
 import { useAuthStore } from './Store/authStore';
 import { getUser } from './appwrite/authService';
 import { Home } from './Pages/Home';
+import {Onboarding} from './Components/Onboarding';
 
 function App() {
 
@@ -62,7 +63,12 @@ function App() {
       <Route path='/signup' element={
         <Signup />
       } />
+      <Route path='/onboarding' element={
+        <Onboarding />
+      } />
     </Routes>
+
+
   )
 }
 

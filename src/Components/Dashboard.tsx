@@ -1,4 +1,3 @@
-import React from 'react'
 import { ArrowDown } from 'lucide-react'
 
 export const Dashboard = () => {
@@ -151,7 +150,7 @@ Offset this amount for approximately ₹120 by supporting tree planting initiati
 
 Offset Now */}
 
-            
+
             <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mt-6'>
                 <div className='flex flex-col gap-3 mt-6 border-1'>
                     <div className='bg-[#242424] rounded-md p-5'>
@@ -199,7 +198,7 @@ Offset Now */}
                         </div>
                     </div>
                 </div>
-                </div>
+            </div>
 
         </div>
     )

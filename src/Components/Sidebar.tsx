@@ -1,12 +1,29 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Leaf, Home, ChartLine, Calendar, Swords, Car, Apple, Lightbulb, BaggageClaim , Settings } from 'lucide-react'
+import { getUser } from '../appwrite/authService';
+import image from '../Assets/images/userprofile.jpg'
 
 interface SidebarProps {
   onNavChange: (component: string) => void;
   activeItem: string;
 }
 
+
 export const Sidebar = ({ onNavChange, activeItem }: SidebarProps) => {
+
+    const [userName , setUserName] = React.useState<string>('')
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const user = await getUser();
+                setUserName(user.name);
+            } catch (error) {
+                console.error("Error fetching user:", error);
+            }
+        };
+        fetchUser();
+    } , []);
     return (
         <div className='flex flex-col w-[16rem] h-screen bg-[#18181B] text-white p-4 border-1 '>
             <div className='flex gap-2 items-center border-b-1 pb-4 border-gray-700'>
@@ -87,11 +104,11 @@ export const Sidebar = ({ onNavChange, activeItem }: SidebarProps) => {
                 {/* user profile */}
 
                 <span className='w-10 h-10 rounded-full bg-gray-500 flex items-center justify-center'>
-
+                    <img src={image} alt="User" className='w-10 h-10 rounded-full' />
                 </span>
 
                 <div className='flex flex-col'>
-                    <h1 className='text-sm font-semibold'>John doe</h1>
+                    <h1 className='text-sm font-semibold'>{userName}</h1>
                     <p className='text-xs text-gray-400'>Level 3 Eco-Warrior</p>
                 </div>
 
