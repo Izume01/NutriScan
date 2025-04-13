@@ -20,14 +20,6 @@ export const registerUser = async (
 
 export const loginUser = async (email: string, password: string) => {
   try {
-    // First try to delete any existing session
-    try {
-      await account.deleteSession('current');
-    } catch (e) {
-      console.error("No existing session to delete:", e);
-    }
-    
-    // Now create a new session
     const user = await account.createEmailPasswordSession(email, password);
     useAuthStore.getState().setUser(user); // Store user in Zustand
     return user;
@@ -38,8 +30,11 @@ export const loginUser = async (email: string, password: string) => {
 };
 
 export const oauthLogin = async (provider: OAuthProvider) => {
-  return account.createOAuth2Session(provider);
+  return account.createOAuth2Session(provider, window.location.origin + '/home');
 };
+
+// Export OAuthProvider type from appwrite
+export { OAuthProvider } from "appwrite";
 
 export const getUser = async () => {
   try {
@@ -49,6 +44,15 @@ export const getUser = async () => {
   } catch (error) {
     console.error("Error fetching user:", error);
     throw error;
+  }
+};
+
+export const getCurrentSession = async () => {
+  try {
+    return await account.getSession('current');
+  } catch (error) {
+    console.error("Error getting current session:", error);
+    return null;
   }
 };
 

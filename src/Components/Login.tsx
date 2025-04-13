@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import image from '../Assets/images/download.jpeg'
 
-import { loginUser, getUser } from '../appwrite/authService'
+import { loginUser, getUser, oauthLogin } from '../appwrite/authService'
+import { OAuthProvider } from 'appwrite'
+
 
 export const Login = () => {
 
@@ -16,6 +18,16 @@ export const Login = () => {
             console.log(user)
         } catch (error) {
             console.error('Error logging in:', error);
+        }
+    }
+
+    const handleAuthProvider = async (provider: OAuthProvider) => {
+        try {
+            await oauthLogin(provider)
+            const user = await getUser()
+            console.log(user)
+        } catch (error) {
+            console.error('Error logging in with OAuth:', error);
         }
     }
 
@@ -44,7 +56,11 @@ export const Login = () => {
                         <div>
                             <p className='text-sm text-gray-400 mt-4 text-center'>Or login with</p>
                             <div className='flex justify-center gap-2 mt-2 w-full'>
-                                <button className='bg-[#3F3F46] p-2 w-full rounded-md text-white '>Github</button>
+                                <button
+                                    onClick={() => {
+                                        handleAuthProvider(OAuthProvider.Github)
+                                    }}
+                                    className='bg-[#3F3F46] p-2 w-full rounded-md text-white '>Github</button>
                             </div>
                         </div>
                     </div>
