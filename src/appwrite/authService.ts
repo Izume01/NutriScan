@@ -20,6 +20,14 @@ export const registerUser = async (
 
 export const loginUser = async (email: string, password: string) => {
   try {
+    // First try to delete any existing session
+    try {
+      await account.deleteSession('current');
+    } catch (e) {
+      console.error("No existing session to delete:", e);
+    }
+    
+    // Now create a new session
     const user = await account.createEmailPasswordSession(email, password);
     useAuthStore.getState().setUser(user); // Store user in Zustand
     return user;

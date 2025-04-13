@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import {setUserBaseline} from '../appwrite/dbService'
 import { getUser } from '../appwrite/authService'
 import { useEffect } from 'react'
+import { useNavigate } from 'react-router'
 const emissionFactors = {
     transport: {
         car: 0.21,        
@@ -29,6 +30,7 @@ const emissionFactors = {
 }
 
 export const Onboarding = () => {
+    const navigate = useNavigate()  
     const [step, setStep] = useState(1)
     const [answers, setAnswers] = useState({
         transportMode: '',
@@ -85,6 +87,10 @@ export const Onboarding = () => {
     const handleSubmit = () => {
         console.log('User Answers:', answers)
         CalculateBaseline()
+
+        setTimeout(() => {
+            navigate('/dashboard')
+        }, 3000)
     }
 
     const progressWidth = (step / 4) * 100

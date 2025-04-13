@@ -3,29 +3,37 @@ import { registerUser, loginUser, oauthLogin, getUser } from '../appwrite/authSe
 import { OAuthProvider } from 'appwrite'
 import { createUserDoc } from '../appwrite/dbService'
 import image from '../Assets/images/download.jpeg'
+import { useNavigate } from 'react-router'
 export const Signup = () => {
+
+    const navigate = useNavigate()
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [name, setName] = useState('')
 
     const Register = async () => {
-        console.log(email, password, name)
         await registerUser(email, password, name)
         await loginUser(email, password)
 
-        const user = await getUser()
-        const userId = user.$id
-
-        await createUserDoc(userId, {
-            bio: "New User",
-            joinedAt: new Date().toISOString(),
-        })
+        setTimeout(() => {
+            navigate('/onboarding')
+        }, 1000)  // 1 second delay before navigation
     }
 
     const handleAuthProvider = async (provider: OAuthProvider) => {
         try {
             await oauthLogin(provider)
+
+            const user = await getUser()
+            const userId = user.$id
+            const userDoc = await createUserDoc(userId, {
+                bio: "New User",
+                joinedAt: new Date().toISOString(),
+            })
+            console.log('User document created:', userDoc)
+
+            navigate('/onboarding')
         } catch (error) {
             console.error('Error logging in with OAuth:', error);
         }
@@ -47,11 +55,7 @@ export const Signup = () => {
 
                     <div className='w-full max-w-md'>
                         <div className='flex justify-center gap-2 mt-4'>
-                            <button
-                                onClick={() => {
-                                    handleAuthProvider(OAuthProvider.Google)
-                                }}
-                                className=' w-full bg-[#3F3F46] hover:bg-[#55555c] transition-colors p-2 rounded-md text-white'>Google</button>
+                            
                             <button
                                 onClick={() => {
                                     handleAuthProvider(OAuthProvider.Github)
@@ -94,7 +98,11 @@ export const Signup = () => {
                         <button
                             onClick={Register}
                             className='bg-[#3F3F46] p-2 rounded-md text-white'>Sign up</button>
-                        <p className='text-sm text-gray-400'>Already have an account? <span className='text-blue-500 cursor-pointer'>Login</span></p>
+                        <p 
+                         onClick={() => {
+                            navigate('/login')
+                         }}
+                         className='text-sm text-gray-400'>Already have an account? <span className='text-blue-500 cursor-pointer'>Login</span></p>
                     </div>
 
 

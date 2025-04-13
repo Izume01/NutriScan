@@ -44,7 +44,6 @@ export const Login = () => {
                         <div>
                             <p className='text-sm text-gray-400 mt-4 text-center'>Or login with</p>
                             <div className='flex justify-center gap-2 mt-2 w-full'>
-                                <button className='bg-[#3F3F46] p-2 w-full rounded-md text-white '>Google</button>
                                 <button className='bg-[#3F3F46] p-2 w-full rounded-md text-white '>Github</button>
                             </div>
                         </div>
