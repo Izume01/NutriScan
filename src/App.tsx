@@ -8,7 +8,7 @@ import PrivateRoute from './Components/PrivateRoute';
 import { useAuthStore } from './Store/authStore';
 import { getUser } from './appwrite/authService';
 import { Home } from './Pages/Home';
-import {Onboarding} from './Components/Onboarding';
+import { Onboarding } from './Components/Onboarding';
 import LandingPage from './Pages/Landing';
 
 function App() {
