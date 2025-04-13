@@ -1,10 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect } from 'react';
+/* eslint-disable */
+import React, { useEffect, useState } from 'react';
 import { ArrowDown, ArrowUp } from 'lucide-react';
 import { getUserBaseline, getUserEmissions } from '../appwrite/dbService';
 import { offsetTotalEmission } from '../appwrite/dbService';
 import { getUser } from '../appwrite/authService';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { GoogleGenAI } from "@google/genai";
+
+
+
+type ActivityType = "Travel" | "Food" | "Energy" | "Shopping" | "All"
+type ActivityItem = {
+    id: string
+    type: Exclude<ActivityType, "All">
+    date: string
+    description: string
+    emissions: number
+    details: string
+}
 
 export const Dashboard = () => {
     // State variables
@@ -13,6 +27,10 @@ export const Dashboard = () => {
     const [calculatedData, setCalculatedData] = React.useState<any>(null);
     const [loading, setLoading] = React.useState(true);
     const [chartData, setChartData] = React.useState<any[]>([]);
+
+
+
+
 
     const handleOffset = async () => {
         try {
@@ -25,6 +43,126 @@ export const Dashboard = () => {
             alert('Error offsetting emissions. Please try again.');
         }
     }
+
+    const [activities, setActivities] = useState<ActivityItem[]>([])
+    const [createActivitySummary, setCreateActivitySummary] = useState<string>("") // Removed unused state
+
+    useEffect(() => {
+        const fetchActivities = async () => {
+            try {
+                const user = await getUser()
+                if (user) {
+                    const userEmissions = await getUserEmissions(user.$id)
+                    const formattedActivities = userEmissions.map((activity) => ({
+                        id: activity.$id,
+                        type: activity.type,
+                        date: activity.date,
+                        description: activity.description,
+                        emissions: activity.emission,
+                        details: `${activity.value} ${activity.unit}`,
+                    }))
+                    setActivities(formattedActivities)
+                }
+            } catch (error) {
+                console.error("Error fetching activities:", error)
+            }
+        }
+        fetchActivities()
+    }, [])
+
+
+    useEffect(() => {
+        const createActivitySummary = (activities: ActivityItem[]): string => {
+            if (activities.length === 0) return "No activities recorded in the past 7 days."
+
+            // Group activities by type
+            const byType: Record<string, ActivityItem[]> = {}
+            activities.forEach(activity => {
+                if (!byType[activity.type]) byType[activity.type] = []
+                byType[activity.type].push(activity)
+            })
+
+            // Create summary by type
+            const typeSummaries = Object.entries(byType).map(([type, items]) => {
+                const totalEmissions = items.reduce((sum, act) => sum + act.emissions, 0).toFixed(2)
+                const descriptions = items.map(act => act.description).join(", ")
+                return `${items.length} ${type} activities (${totalEmissions} kg CO2e): ${descriptions}`
+            })
+            setCreateActivitySummary(typeSummaries.join(" | "))
+            return typeSummaries.join(" | ")
+
+        }
+
+        createActivitySummary(activities)
+    }, [activities]) // Re-run when activities change
+
+
+    const SUGGESTIONS_PROMPT = `You are an expert sustainability assistant. Based on the user's carbon activity data ${createActivitySummary}, generate 3 very short, personalized suggestions to reduce their footprint.
+
+    Each suggestion should:
+    - Have a **short, catchy title**
+    - Be **1 sentence max**
+    - Be direct and actionable
+    - Sound positive and encouraging
+
+    - don't say anything like Okay, I need a little more detail about the user's specific activities to provide truly personalized suggestions. However, based on the general categories of "Food" and "Travel", here are 3 very short, personalized suggestions, assuming a typical impact in these areas:
+    just give answer
+    Format:
+    Quick actionable tip.
+* **Local Feast:**  not this just Local feast not the markdown
+don't give markdown please
+
+    Example:
+    Try a plant-based meal once a week.
+
+    Keep it very concise and focused.`;
+
+
+    // Removed useEffect for createActivitySummary as it was unused
+
+
+    const generateSuggestion = React.useCallback(async (activities: ActivityItem[]) => {
+
+        const ai = new GoogleGenAI({
+            apiKey: import.meta.env.VITE_GEMINI_API_KEY, // Ensure this is set in your environment variables
+        });
+
+        if (!ai) {
+            console.error("Google Genai API key is missing");
+            return "API key is missing. Unable to generate suggestions.";
+        }
+
+        const activityDescriptions = activities.map(activity => `${activity.type}: ${activity.description}`).join(", ");
+        const prompt = `${SUGGESTIONS_PROMPT} Here are the user's activities: ${activityDescriptions}`;
+        try {
+            const response = await ai.models.generateContent({
+                model: "gemini-2.0-flash",
+                contents: [{ role: "user", parts: [{ text: prompt }] }],
+            });
+            if (response.candidates &&
+                response.candidates.length > 0 &&
+                response.candidates[0]?.content?.parts &&
+                response.candidates[0].content.parts.length > 0) {
+                return response.candidates[0].content.parts[0]?.text || "No suggestions available.";
+            }
+            return "Error generating suggestions.";
+        } catch (error) {
+            console.error("Error generating suggestions:", error);
+            return "Error generating suggestions.";
+        }
+    }, []);
+
+    const [recommendations, setRecommendations] = useState<string[]>([]);
+
+    useEffect(() => {
+        const fetchRecommendations = async () => {
+            const suggestionsText = await generateSuggestion(activities);
+            // Split the response into individual suggestions based on newlines
+            const suggestionsArray = suggestionsText ? suggestionsText.split("\n").filter((s) => s.trim() !== "") : [];
+            setRecommendations(suggestionsArray);
+        };
+        fetchRecommendations();
+    }, [activities]); // Re-run when activities change
 
     // Effect to fetch initial user data and baseline
     useEffect(() => {
@@ -66,7 +204,7 @@ export const Dashboard = () => {
         // If either baseline or emissions is null, ensure calculatedData and chartData are reset or handled appropriately
         else {
             setCalculatedData(null); // Reset calculated data if inputs are missing
-            setChartData([]);      // Reset chart data
+            setChartData([]);      // Reset chart data
         }
     }, [userBaseline, userEmissions]); // Dependencies: run when baseline or emissions data updates
 
@@ -293,23 +431,26 @@ export const Dashboard = () => {
                         </div>
                         {/* Individual AI Suggestion Items */}
                         <div className='flex flex-col gap-3'>
-                            <div className='bg-[#121212] rounded-md p-4 border-l-2 border-green-500'>
-                                <h2 className='text-lg font-bold text-gray-200'>Try Meatless Mondays</h2>
-                                <p className='text-sm text-gray-400'>Switching to plant-based meals one day a week could reduce your footprint by 5%.</p>
-                            </div>
-                            <div className='bg-[#121212] rounded-md p-4 border-l-2 border-blue-500'>
-                                <h2 className='text-lg font-bold text-gray-200'>Optimize Your Route</h2>
-                                <p className='text-sm text-gray-400'>Your travel emissions are highest on Wednesdays. Consider carpooling.</p>
-                            </div>
-                            <div className='bg-[#121212] rounded-md p-4 border-l-2 border-yellow-500'>
-                                <h2 className='text-lg font-bold text-gray-200'>Lower Energy Usage</h2>
-                                <p className='text-sm text-gray-400'>Try using LED lighting to reduce your energy consumption.</p>
-                            </div>
+                            {recommendations.map((recommendation, index) => {
+                                // Basic splitting logic to separate title and description
+                                const parts = recommendation.split('\n');
+                                const title = parts[0]?.trim();
+                                const description = parts.slice(1).join('\n').trim();
+                                // Simple way to alternate border colors
+                                const borderColor = index % 3 === 0 ? 'green-500' : (index % 3 === 1 ? 'blue-500' : 'yellow-500');
+
+                                return (
+                                    <div key={index} className={`bg-[#121212] rounded-md p-4 border-l-2 border-${borderColor}`}>
+                                        <h2 className='text-lg font-bold text-gray-200'>{title}</h2>
+                                        <p className='text-sm text-gray-400'>{description}</p>
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
 
                     {/* Carbon Offset Card (keep unchanged) */}
-                    
+
                 </div>
             </div>
 
@@ -328,7 +469,7 @@ export const Dashboard = () => {
                                 {/* Example calculation: 1kg CO2 ≈ ₹7.6 */}
                                 <br />by supporting tree planting.
                             </p>
-                            <button 
+                            <button
                                 onClick={handleOffset}
                                 className='w-full bg-green-600 hover:bg-green-700 text-white rounded-md px-4 py-2 font-semibold transition duration-200'>
                                 Offset Now
